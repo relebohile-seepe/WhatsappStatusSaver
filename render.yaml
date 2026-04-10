@@ -3,7 +3,7 @@ services:
     name: whatsapp-status-viewer
     env: node
     region: oregon
-    buildCommand: cd server && npm install
+    buildCommand: cd server && npm install && npx puppeteer browsers install chrome
     startCommand: cd server && node index.js
     envVars:
       - key: NODE_ENV
