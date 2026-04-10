@@ -3,7 +3,7 @@ services:
     name: whatsapp-status-viewer
     env: node
     region: oregon
-    buildCommand: cd server && npm install && npx puppeteer browsers install chrome
+    buildCommand: cd server && npm install && PUPPETEER_CACHE_DIR=/opt/render/project/src/.cache/puppeteer npx puppeteer browsers install chrome
     startCommand: cd server && node index.js
     envVars:
       - key: NODE_ENV
@@ -12,6 +12,8 @@ services:
         sync: false           # Set this to your Netlify app URL after deploying
       - key: ADMIN_PASSWORD
         generateValue: true   # Render auto-generates a secure value; copy it from the dashboard
+      - key: PUPPETEER_CACHE_DIR
+        value: /opt/render/project/src/.cache/puppeteer
 
     # Persistent disk keeps the WhatsApp session alive across restarts/redeploys.
     # Requires Render's paid Starter plan ($7/month) — without this you must

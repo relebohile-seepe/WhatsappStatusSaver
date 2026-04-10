@@ -3,6 +3,7 @@ server/node_modules/
 client/node_modules/
 .wwebjs_auth/
 .wwebjs_cache/
+.cache/
 downloads/
 client/dist/
 *.log
