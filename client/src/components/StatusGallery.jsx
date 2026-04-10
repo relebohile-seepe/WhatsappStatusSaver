@@ -72,7 +72,7 @@ export default function StatusGallery({ statuses, onRefresh }) {
             <button className="btn-download-all" onClick={onRefresh}>🔄 Refresh Statuses</button>
             <p className="empty-hint">
               Tip: If statuses still don't appear, check{' '}
-              <a href="http://localhost:3001/api/debug/stores" target="_blank" rel="noreferrer"
+              <a href="/api/debug/stores" target="_blank" rel="noreferrer"
                  style={{color:'var(--green)'}}>
                 the debug page
               </a>{' '}
