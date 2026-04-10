@@ -87,18 +87,28 @@ function initClient() {
       headless: true,
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       args: [
+        // Required for running as root in a container (Render)
         '--no-sandbox',
         '--disable-setuid-sandbox',
+        // Use /tmp instead of /dev/shm which is tiny on Render free tier
         '--disable-dev-shm-usage',
         '--no-first-run',
         '--no-zygote',
-        // Keep GPU disabled for stability but enable software video decoding
+        // Single process avoids spawning a separate renderer — critical on 512 MB
+        '--single-process',
+        // GPU / graphics — all disabled for a headless server
         '--disable-gpu',
         '--disable-accelerated-2d-canvas',
-        '--enable-features=NetworkService,NetworkServiceLogging',
-        '--ignore-gpu-blocklist',
-        '--enable-accelerated-video-decode',
-        '--use-gl=swiftshader',
+        '--disable-accelerated-video-decode',
+        // Reduce memory footprint
+        '--disable-extensions',
+        '--disable-background-networking',
+        '--disable-sync',
+        '--disable-translate',
+        '--hide-scrollbars',
+        '--metrics-recording-only',
+        '--mute-audio',
+        '--safebrowsing-disable-auto-update',
         // Allow autoplay so WA Web can load media without user gesture
         '--autoplay-policy=no-user-gesture-required',
         '--disable-background-media-suspend',
@@ -214,25 +224,38 @@ function initClient() {
     }
   });
 
-  client.on('disconnected', (reason) => {
+  client.on('disconnected', async (reason) => {
     clientStatus = 'disconnected';
     currentQR = null;
     io.emit('disconnected', { reason });
     console.log('[WA] Disconnected:', reason);
 
-    // LOGOUT means the user intentionally signed out from their phone — don't
-    // auto-reconnect, let them scan a fresh QR. For everything else (network
-    // blips, Render restarts, session conflicts) reinitialise after 3 seconds.
+    // Destroy the old Chromium process before creating a new one.
+    // Without this, reinitialising on Render's free tier (512 MB) spawns a
+    // second browser that immediately OOMs and crashes both instances.
+    try {
+      await client.destroy();
+    } catch (_) {}
+
+    // LOGOUT means the user signed out from their phone — show fresh QR.
+    // For everything else (network blips, Render restarts, conflicts) reconnect.
     if (reason !== 'LOGOUT') {
-      console.log('[WA] Non-logout disconnect — reinitialising in 3s…');
-      setTimeout(() => initClient(), 3000);
+      console.log('[WA] Non-logout disconnect — reinitialising in 5s…');
+      setTimeout(() => initClient(), 5000);
+    } else {
+      // Even on logout we reinitialise so the QR screen appears automatically.
+      console.log('[WA] Logout — showing fresh QR in 5s…');
+      setTimeout(() => initClient(), 5000);
     }
   });
 
-  client.initialize().catch(err => {
+  client.initialize().catch(async err => {
     console.error('[WA] Init error:', err);
     clientStatus = 'disconnected';
     io.emit('disconnected', { reason: err.message });
+    try { await client.destroy(); } catch (_) {}
+    console.log('[WA] Init failed — retrying in 10s…');
+    setTimeout(() => initClient(), 10000);
   });
 }
 
