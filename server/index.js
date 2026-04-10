@@ -219,6 +219,14 @@ function initClient() {
     currentQR = null;
     io.emit('disconnected', { reason });
     console.log('[WA] Disconnected:', reason);
+
+    // LOGOUT means the user intentionally signed out from their phone — don't
+    // auto-reconnect, let them scan a fresh QR. For everything else (network
+    // blips, Render restarts, session conflicts) reinitialise after 3 seconds.
+    if (reason !== 'LOGOUT') {
+      console.log('[WA] Non-logout disconnect — reinitialising in 3s…');
+      setTimeout(() => initClient(), 3000);
+    }
   });
 
   client.initialize().catch(err => {

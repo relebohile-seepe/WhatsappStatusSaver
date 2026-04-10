@@ -13,9 +13,10 @@ services:
       - key: ADMIN_PASSWORD
         generateValue: true   # Render auto-generates a secure value; copy it from the dashboard
 
-    # Uncomment the block below if you want WhatsApp sessions and downloads to survive
-    # redeploys and restarts (requires Render's paid Starter plan, $7/month).
-    # disk:
-    #   name: whatsapp-data
-    #   mountPath: /opt/render/project/src/.wwebjs_auth
-    #   sizeGB: 1
+    # Persistent disk keeps the WhatsApp session alive across restarts/redeploys.
+    # Requires Render's paid Starter plan ($7/month) — without this you must
+    # re-scan the QR code every time Render's free tier spins the server down.
+    disk:
+      name: whatsapp-data
+      mountPath: /opt/render/project/src/.wwebjs_auth
+      sizeGB: 1
