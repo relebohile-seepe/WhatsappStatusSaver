@@ -1,0 +1,17 @@
+{
+  "name": "whatsapp-status-viewer",
+  "version": "1.0.0",
+  "description": "View and download WhatsApp status updates",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && node index.js",
+    "dev:client": "cd client && npm run dev",
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "start:server": "cd server && node index.js",
+    "start:client": "cd client && npm run preview",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

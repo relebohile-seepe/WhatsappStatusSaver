@@ -1,0 +1,97 @@
+.gallery-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 56px); /* account for NavBar */
+}
+
+/* Toolbar (replaces old header) */
+.gallery-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.gallery-stats {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-icon {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 16px;
+  color: var(--text);
+  transition: background 0.2s;
+}
+.btn-icon:hover { background: #3a4a54; }
+
+.btn-download-all {
+  background: var(--green);
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.2s, opacity 0.2s;
+}
+.btn-download-all:hover:not(:disabled) { background: var(--green-dark); }
+.btn-download-all:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Banner */
+.result-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  font-size: 13px;
+  gap: 12px;
+}
+.result-banner.success { background: #1a3c2b; color: #4ade80; }
+.result-banner.error { background: #3c1a1a; color: #f87171; }
+
+.banner-close {
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Main grid */
+.gallery-main {
+  flex: 1;
+  padding: 24px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.empty-state span { font-size: 56px; }
+.empty-state h3 { font-size: 18px; }
+.empty-state p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+.empty-hint { font-size: 12px !important; margin-top: -4px; }

@@ -1,0 +1,36 @@
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 16px;
+}
+
+.loading-screen .wa-logo { font-size: 52px; }
+
+.loading-screen h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.progress-bar {
+  width: 280px;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.loading-pct {
+  color: var(--text-muted);
+  font-size: 13px;
+}

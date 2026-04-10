@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: whatsapp-status-viewer
+    env: node
+    region: oregon
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        sync: false           # Set this to your Netlify app URL after deploying
+      - key: ADMIN_PASSWORD
+        generateValue: true   # Render auto-generates a secure value; copy it from the dashboard
+
+    # Uncomment the block below if you want WhatsApp sessions and downloads to survive
+    # redeploys and restarts (requires Render's paid Starter plan, $7/month).
+    # disk:
+    #   name: whatsapp-data
+    #   mountPath: /opt/render/project/src/.wwebjs_auth
+    #   sizeGB: 1
