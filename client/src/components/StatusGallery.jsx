@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import StatusCard from './StatusCard'
 import StatusModal from './StatusModal'
+import { apiFetch } from '../api'
 import './StatusGallery.css'
 
 export default function StatusGallery({ statuses, onRefresh }) {
@@ -12,8 +13,7 @@ export default function StatusGallery({ statuses, onRefresh }) {
     setDownloading(true)
     setDownloadResult(null)
     try {
-      const res = await fetch('/api/download-all', { method: 'POST' })
-      const data = await res.json()
+      const { data } = await apiFetch('/api/download-all', { method: 'POST' })
       setDownloadResult(data)
     } catch (e) {
       setDownloadResult({ error: e.message })

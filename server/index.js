@@ -883,8 +883,8 @@ function requireAdmin(req, res, next) {
 }
 
 app.post('/api/admin/verify', (req, res) => {
-  const { password } = req.body;
-  if (password === ADMIN_PASSWORD) {
+  const { password } = req.body || {};
+  if (password && password === ADMIN_PASSWORD) {
     res.json({ ok: true, token: ADMIN_TOKEN });
   } else {
     res.status(401).json({ error: 'Invalid password' });

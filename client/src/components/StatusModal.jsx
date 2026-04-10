@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import './StatusModal.css'
 
+const BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+
 export default function StatusModal({ item, onClose }) {
   const { update, contactName } = item
 
@@ -11,7 +13,7 @@ export default function StatusModal({ item, onClose }) {
   }, [onClose])
 
   const handleDownload = async () => {
-    const res = await fetch(`/api/download/${encodeURIComponent(update.id)}`)
+    const res = await fetch(`${BASE}/api/download/${encodeURIComponent(update.id)}`)
     if (!res.ok) { alert('Download failed'); return }
     const blob = await res.blob()
     const ext = blob.type.split('/')[1]?.split(';')[0] || 'bin'

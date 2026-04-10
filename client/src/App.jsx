@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import socket from './socket'
+import { apiFetch } from './api'
 import QRScreen from './components/QRScreen'
 import LoadingScreen from './components/LoadingScreen'
 import NavBar from './components/NavBar'
@@ -19,9 +20,8 @@ export default function App() {
 
   useEffect(() => {
     // Get initial state from server
-    fetch('/api/status')
-      .then(r => r.json())
-      .then(data => {
+    apiFetch('/api/status')
+      .then(({ data }) => {
         setAppState(data.status)
         if (data.qr) setQr(data.qr)
       })
@@ -66,8 +66,7 @@ export default function App() {
 
   const fetchStatuses = async () => {
     try {
-      const res = await fetch('/api/statuses')
-      const data = await res.json()
+      const { data } = await apiFetch('/api/statuses')
       setStatuses(data)
     } catch (e) {
       console.error('Failed to fetch statuses', e)
@@ -75,7 +74,7 @@ export default function App() {
   }
 
   const handleLogout = async () => {
-    await fetch('/api/logout', { method: 'POST' })
+    await apiFetch('/api/logout', { method: 'POST' })
     setStatuses([])
     setAppState('initializing')
     setActiveTab('status')

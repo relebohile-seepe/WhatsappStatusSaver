@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './StatusCard.css'
 
+const BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+
 const MIME_ICONS = { image: '🖼️', video: '🎥', audio: '🎵', text: '📝', document: '📄' }
 
 function formatTime(ts) {
@@ -16,7 +18,7 @@ export default function StatusCard({ contact, onViewMedia }) {
     e.stopPropagation()
     setDownloading(update.id)
     try {
-      const res = await fetch(`/api/download/${encodeURIComponent(update.id)}`)
+      const res = await fetch(`${BASE}/api/download/${encodeURIComponent(update.id)}`)
       if (!res.ok) throw new Error('Download failed')
       const blob = await res.blob()
       const ext = blob.type.split('/')[1]?.split(';')[0] || 'bin'

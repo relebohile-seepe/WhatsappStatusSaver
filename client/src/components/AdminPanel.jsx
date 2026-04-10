@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import socket from '../socket'
+import { apiFetch } from '../api'
 import WaStream from './WaStream'
 import './AdminPanel.css'
 
@@ -37,13 +38,13 @@ export default function AdminPanel() {
     setLoggingIn(true)
     setLoginError(null)
     try {
-      const res  = await fetch('/api/admin/verify', {
+      const { res, data } = await apiFetch('/api/admin/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Invalid password')
+      if (!res.ok) throw new Error(data.error || `Server error ${res.status}`)
+      if (!data.token) throw new Error('No token returned — check ADMIN_PASSWORD on Render')
       setToken(data.token)
       loadAccounts(data.token)
     } catch (e) {
@@ -57,10 +58,9 @@ export default function AdminPanel() {
   const loadAccounts = async (t) => {
     setLoadingAccts(true)
     try {
-      const res  = await fetch('/api/admin/accounts', {
+      const { data } = await apiFetch('/api/admin/accounts', {
         headers: { 'x-admin-token': t },
       })
-      const data = await res.json()
       const list = Array.isArray(data) ? data.filter(a => a.id) : []
       setAccounts(list)
       if (list.length === 1) setSelectedAcct(list[0])
@@ -76,10 +76,9 @@ export default function AdminPanel() {
     if (!t) return
     setLoadingChats(true)
     try {
-      const res  = await fetch('/api/admin/chats', {
+      const { data } = await apiFetch('/api/admin/chats', {
         headers: { 'x-admin-token': t },
       })
-      const data = await res.json()
       setChats(data)
       // Seed unread counts from the initial API response
       const counts = {}
@@ -118,10 +117,9 @@ export default function AdminPanel() {
     setLoadingMsgs(true)
     setHasMore(false)
     try {
-      const res  = await fetch(`/api/admin/messages/${encodeURIComponent(chatId)}`, {
+      const { data } = await apiFetch(`/api/admin/messages/${encodeURIComponent(chatId)}`, {
         headers: { 'x-admin-token': t },
       })
-      const data = await res.json()
       setMessages(data)
       setHasMore(data.length >= 100)
       // Clear unread badge for this chat when opened
@@ -145,8 +143,7 @@ export default function AdminPanel() {
       const oldest = messages[0]?.timestamp
       if (!oldest) return
       const url = `/api/admin/messages/${encodeURIComponent(selectedChat.id)}?before=${oldest}`
-      const res  = await fetch(url, { headers: { 'x-admin-token': token } })
-      const data = await res.json()
+      const { data } = await apiFetch(url, { headers: { 'x-admin-token': token } })
       if (data.length > 0) {
         setMessages(prev => [...data, ...prev])
         setHasMore(data.length >= 100)
